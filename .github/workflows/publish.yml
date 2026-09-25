@@ -30,7 +30,7 @@ jobs:
   build:
     name: verify and build distributions
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     outputs:
       version: ${{ steps.metadata.outputs.version }}
       python-floor: ${{ steps.metadata.outputs.python-floor }}
@@ -90,6 +90,7 @@ jobs:
     needs: build
     if: github.event_name == 'push' || inputs.target == 'pypi' || inputs.target == 'both'
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     permissions:
       id-token: write
     steps:
@@ -106,6 +107,7 @@ jobs:
     needs: build
     if: github.event_name == 'workflow_dispatch' && (inputs.target == 'testpypi' || inputs.target == 'both')
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     permissions:
       id-token: write
     steps:
@@ -146,6 +148,7 @@ jobs:
     needs: [build, publish-pypi, smoke-test]
     if: always() && needs.publish-pypi.result == 'success' && needs.smoke-test.result == 'success' && startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     permissions:
       contents: write
     steps:
