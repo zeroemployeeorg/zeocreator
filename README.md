@@ -7,7 +7,6 @@
 Turn source observations into evolving stories, frozen dossiers, editorial agendas,
 editions, production briefs, reviewed artifacts, commentary, newsletters and corrections.
 
-[![CI](https://github.com/profrodai/zeocreator/actions/workflows/ci.yml/badge.svg)](https://github.com/profrodai/zeocreator/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/zeocreator)](https://pypi.org/project/zeocreator/)
 [![Python 3.14+](https://img.shields.io/badge/Python-3.14%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![Zeocore 0.11](https://img.shields.io/badge/Zeocore-0.11.0-087f75)](https://pypi.org/project/zeocore/)

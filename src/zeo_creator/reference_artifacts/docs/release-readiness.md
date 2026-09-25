@@ -33,12 +33,16 @@ does not promise 1.x API stability.
 
 ## Publishing workflow
 
-`.github/workflows/publish.yml` follows
+The repository has no GitHub Actions workflows: CI, the documentation deploy and
+trusted publishing do not run on GitHub (operator direction of 2026-09-25, under
+R-36). The removed `publish.yml` followed
 [Zeocore's release workflow](https://github.com/profrodai/zeocore/blob/e630cc5c785f7e527bd597bde6d0949f4a7cc9a9/.github/workflows/publish.yml):
 verify first, build and retain one wheel/sdist pair, publish with OIDC, test the
 exact uploaded version on the minimum Python version, and create the GitHub
-Release from `RELEASE_NOTES.md`. Creator also checks tag/metadata/notes agreement
-before upload and waits for index smoke tests before announcing the release.
+Release from `RELEASE_NOTES.md`. It also checked tag/metadata/notes agreement
+before upload and waited for index smoke tests before announcing the release. The
+trusted-publisher details and steps below describe that workflow and stay for
+reference until a new release path is set.
 
 The configured trusted publisher is project `zeocreator`, owner `profrodai`,
 repository `zeocreator`, workflow filename `publish.yml`, environment unrestricted
