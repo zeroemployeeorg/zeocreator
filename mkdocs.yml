@@ -1,8 +1,8 @@
 site_name: ZEO Creator
 site_description: Provider-neutral creator operations, governed by design.
-site_url: https://profrodai.github.io/zeocreator/
-repo_url: https://github.com/profrodai/zeocreator
-repo_name: profrodai/zeocreator
+site_url: https://zeroemployeeorg.github.io/zeocreator/
+repo_url: https://github.com/zeroemployeeorg/zeocreator
+repo_name: zeroemployeeorg/zeocreator
 edit_uri: edit/main/docs/
 copyright: Copyright &copy; 2026 Prof Rod · MIT licensed
 

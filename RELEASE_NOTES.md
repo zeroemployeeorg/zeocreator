@@ -58,8 +58,8 @@ Existing direct Python integrations can continue supplying their documented port
 Creator does not send mail, authorize effects, hold credentials or schedule jobs.
 Live HubSpot/Kit interoperability remains separately qualified integration work.
 
-[Documentation](https://profrodai.github.io/zeocreator/) ·
-[Installation](https://profrodai.github.io/zeocreator/getting-started/installation/) ·
-[Runtime host guide](https://profrodai.github.io/zeocreator/guides/runtime-host/) ·
-[Changelog](https://github.com/profrodai/zeocreator/blob/v0.5.4/CHANGELOG.md) ·
-[Previous release notes](https://profrodai.github.io/zeocreator/releases/0.5.3/)
+[Documentation](https://zeroemployeeorg.github.io/zeocreator/) ·
+[Installation](https://zeroemployeeorg.github.io/zeocreator/getting-started/installation/) ·
+[Runtime host guide](https://zeroemployeeorg.github.io/zeocreator/guides/runtime-host/) ·
+[Changelog](https://github.com/zeroemployeeorg/zeocreator/blob/v0.5.4/CHANGELOG.md) ·
+[Previous release notes](https://zeroemployeeorg.github.io/zeocreator/releases/0.5.3/)

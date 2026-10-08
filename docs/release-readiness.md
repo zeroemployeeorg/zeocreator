@@ -34,16 +34,23 @@ does not promise 1.x API stability.
 ## Publishing workflow
 
 `.github/workflows/publish.yml` follows
-[Zeocore's release workflow](https://github.com/profrodai/zeocore/blob/e630cc5c785f7e527bd597bde6d0949f4a7cc9a9/.github/workflows/publish.yml):
+[Zeocore's release workflow](https://github.com/zeroemployeeorg/zeocore/blob/e630cc5c785f7e527bd597bde6d0949f4a7cc9a9/.github/workflows/publish.yml):
 verify first, build and retain one wheel/sdist pair, publish with OIDC, test the
 exact uploaded version on the minimum Python version, and create the GitHub
 Release from `RELEASE_NOTES.md`. Creator also checks tag/metadata/notes agreement
 before upload and waits for index smoke tests before announcing the release.
 
-The configured trusted publisher is project `zeocreator`, owner `profrodai`,
-repository `zeocreator`, workflow filename `publish.yml`, environment unrestricted
-(`Any`). The publishing job therefore omits an environment constraint. No PyPI
-API token is stored. See [PyPI trusted publishing](https://docs.pypi.org/trusted-publishers/using-a-publisher/).
+Publishing requires a trusted publisher for project `zeocreator` with owner
+`zeroemployeeorg`, repository `zeocreator`, workflow filename `publish.yml` and
+environment unrestricted (`Any`). The publishing job therefore omits an
+environment constraint. No PyPI API token is stored. See
+[PyPI trusted publishing](https://docs.pypi.org/trusted-publishers/using-a-publisher/).
+
+The repository moved from `profrodai/zeocreator` to `zeroemployeeorg/zeocreator`
+after 0.5.4 was published. The publisher recorded for 0.5.3 and 0.5.4 named owner
+`profrodai`. Whether PyPI and TestPyPI now match the required configuration has
+not been verified since the move. Treat it as a possible release blocker until an
+account administrator confirms it; do not publish to find out.
 
 For each authorized release:
 
