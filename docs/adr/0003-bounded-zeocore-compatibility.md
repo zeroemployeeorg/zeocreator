@@ -59,8 +59,8 @@ its tiers carry different risk:
 - **Internal (10 names):** `host.prepare_request`, `catalogue.validate_inventory`
   and `CandidateCatalogue`, and every `canonical` name above. Zeocore's policy
   lets internal names change in any release, including a patch, and 9 of them are
-  in `provider.py`. Until Zeocore promotes them to a supported tier, which it has
-  offered to do after 0.14.0, they are qualified per release, with the shared
+  in `provider.py`. Until Zeocore promotes them to a supported tier, which it
+  has drafted for 0.15.0 (#90), they are qualified per release, with the shared
   RFC 8785 vectors run against `canonical_bytes` from the installed wheel, and
   they are the first suspect when a qualification fails.
 
@@ -82,8 +82,9 @@ check simply compares against one string.
 
 These are the sha256 values of `contracts/runtime-host-v1/` in Zeocore's source
 tree, measured on 2026-10-09. They are identical at `v0.11.0` (`4fb6dc9c`, the
-current exact pin) and `v0.12.0` (`ddbd9e0d`), and the 0.14.0 draft (#89,
-`4a4c8414`) does not change the directory. Qualifying a new release starts by
+current exact pin) and `v0.12.0` (`ddbd9e0d`). Neither the 0.14.0 draft (#89, at
+`4a4c8414` and `6fc21f8c`) nor the 0.15.0 draft (#90, `e41e3857`) changes the
+directory. Qualifying a new release starts by
 comparing against this table; any difference is a protocol change, not a
 qualification.
 
@@ -110,8 +111,11 @@ qualification.
 
 - The range syntax, and whether the qualified list is packaged data or derived
   from the range plus CI evidence.
-- How Creator reads the protocol version. Zeocore exports no constant today, and
-  has offered `RUNTIME_HOST_PROTOCOL_VERSION` with the promotion of the internal
-  tier.
-- Zeocore's promotion of the internal tier, after 0.14.0. Until then, those names
-  are qualified per release as described above.
+- How Creator reads the protocol version. Zeocore exports no constant today.
+  The 0.15.0 draft (#90) adds `zeo_core.contracts.runtime.RUNTIME_HOST_PROTOCOL_VERSION`
+  (1), tested against every runtime-host-v1 schema and the vectors.
+- Zeocore's promotion of the internal tier. The 0.15.0 draft (#90) adds `__all__`
+  to `runtime_host.canonical`, `catalogue` and `host` (covering all 10 internal
+  names and `parse_result`) and to `channel`. Zeocore ships 0.13.0, 0.14.0 and
+  then 0.15.0. Until 0.15.0 is on PyPI and qualified, those names stay internal
+  and are qualified per release as described above.
