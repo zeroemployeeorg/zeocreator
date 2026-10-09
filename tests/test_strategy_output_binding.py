@@ -147,6 +147,16 @@ def test_revisions_citing_signals_or_sources_not_given_are_refused() -> None:
         {"signal_refs": ["signal_from_elsewhere"]},
         {"primary_source_refs": ["observation_from_elsewhere"]},
         {
+            "material_developments": [
+                {
+                    "development_id": "development_example",
+                    "occurred_at": NOW.isoformat(),
+                    "summary": "A development from elsewhere.",
+                    "source_refs": ["observation_from_elsewhere"],
+                }
+            ]
+        },
+        {
             "revision": 2,
             "previous_revision_ref": "story_revision_from_elsewhere",
             "status": "DEVELOPING",

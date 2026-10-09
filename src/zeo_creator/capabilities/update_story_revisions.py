@@ -77,7 +77,16 @@ def update_story_revisions(
                     (revision.previous_revision_ref,), previous_ids | produced, code, what
                 )
             require_bound_refs(
-                (*revision.primary_source_refs, *revision.secondary_source_refs),
+                (
+                    *revision.primary_source_refs,
+                    *revision.secondary_source_refs,
+                    *(
+                        ref
+                        for claim in (*revision.verified_claims, *revision.disputed_claims)
+                        for ref in claim.evidence_refs
+                    ),
+                    *(ref for item in revision.material_developments for ref in item.source_refs),
+                ),
                 sources,
                 code,
                 what,
