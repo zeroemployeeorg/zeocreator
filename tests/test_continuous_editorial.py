@@ -131,6 +131,42 @@ def test_common_kernel_runs_observation_to_edition() -> None:
     assert edition_result.data.edition.lead_items[0].slot_ref == slot.slot_id
 
 
+def test_same_topic_signals_in_one_batch_chain_into_one_story() -> None:
+    first = observation()
+    second = SourceObservation.model_validate(
+        {
+            **first.model_dump(mode="json", exclude={"content_digest"}),
+            "observation_id": f"{first.observation_id}-second",
+            "extracted_text": "A second development on the same story.",
+        }
+    )
+    signals = _invoke(
+        "creator.extract_editorial_signals@1.0.0",
+        ExtractEditorialSignalsRequest(
+            organization_id="org_example",
+            publication_id="publication-a.example",
+            observations=(first, second),
+            created_at=NOW,
+        ),
+    ).data.signals
+    assert len({item.topic for item in signals}) == 1
+    result = _invoke(
+        "creator.update_story_revisions@1.0.0",
+        {
+            "organization_id": "org_example",
+            "publication_id": "publication-a.example",
+            "signals": [item.model_dump(mode="json") for item in signals],
+            "previous_revisions": [],
+            "created_at": NOW.isoformat(),
+        },
+    )
+    assert result.status is CapabilityStatus.success
+    earlier, later = result.data.revisions
+    assert earlier.story_id == later.story_id
+    assert (earlier.revision, later.revision) == (1, 2)
+    assert later.previous_revision_ref == earlier.story_revision_id
+
+
 def test_publication_crossing_fails_closed() -> None:
     crossed = type(dossier()).model_validate(
         dossier().model_dump(mode="json")
