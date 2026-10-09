@@ -1,6 +1,6 @@
 # ADR 0003: Bounded, qualified Zeocore compatibility
 
-- Status: Proposed; not in force until reviewed (ADR 0002's exact pin governs until then)
+- Status: Proposed; surface reviewed by the Zeocore seat; not in force until accepted (ADR 0002's exact pin governs until then)
 - Date: 2026-10-09
 - Decision owner: Creator seat, under the council's K4 direction of 2026-10-09
 - Supersedes, once accepted: ADR 0002's exact dependency pin only
@@ -16,8 +16,18 @@ consumer through a Creator release.
 
 Creator declares a bounded Zeocore range, not one version. The lower bound is the
 oldest release that Creator's gate has qualified. The upper bound excludes the
-next Zeocore minor release, because Zeocore is still in 0.x. A release inside the
-range is admitted only when Creator's gate has qualified it.
+minor after the newest **qualified** minor (for example `>=0.11.0,<0.15` once
+0.14.0 qualifies). Zeocore's 0.x minors may break and it has shipped no patch
+releases, so a "below the next minor" bound would admit exactly one version.
+The range is only a ceiling: a release inside it is admitted only when Creator's
+gate has qualified it, and the qualified list is the admission rule.
+
+Compatibility is also bounded by the runtime-host protocol version. Every
+runtime-host message carries `protocol_version` (1 today), and Zeocore treats a
+change to it as breaking. A Zeocore release whose protocol version differs from
+the qualified one is not admitted, whatever its package version. The wheel does
+not ship the protocol's schemas or canonical vectors, so their sha256 values are
+pinned from the source tree at the qualified tag.
 
 Qualification covers only the Zeocore surface Creator actually uses:
 
@@ -38,6 +48,21 @@ Creator's tests also use a gate surface, which qualification covers too:
 `contracts.CapabilityStatus`, and `contracts.runtime.AttemptBinding` and
 `LaunchContext`. The list is measured by parsing every `zeo_core` import in
 `src/` and `tests/`, not by line matching, which misses multi-line imports.
+
+The Zeocore seat reviewed this surface on 2026-10-09 (ZEOCORE-SOW-02), and
+its tiers carry different risk:
+
+- **Public (20 names):** in a package `__all__` and documented. These are all of
+  `tools`, all of `contracts` plus `CapabilityStatus`, all of `contracts.runtime`,
+  and `llm_tools`.
+- **Documented, no `__all__` (1 name):** `host.parse_result` (test-only).
+- **Internal (10 names):** `host.prepare_request`, `catalogue.validate_inventory`
+  and `CandidateCatalogue`, and every `canonical` name above. Zeocore's policy
+  lets internal names change in any release, including a patch, and 9 of them are
+  in `provider.py`. Until Zeocore promotes them to a supported tier, which it has
+  offered to do after 0.14.0, they are qualified per release, with the shared
+  RFC 8785 vectors run against `canonical_bytes` from the installed wheel, and
+  they are the first suspect when a qualification fails.
 
 A Zeocore release qualifies when, installed in a clean environment, it passes:
 
@@ -66,6 +91,8 @@ check simply compares against one string.
 
 - The range syntax, and whether the qualified list is packaged data or derived
   from the range plus CI evidence.
-- Whether the runtime-host protocol version, once Zeocore publishes one, should
-  bound compatibility alongside the package version.
-- Review by the Zeocore seat of the surface listed above.
+- How Creator reads the protocol version. Zeocore exports no constant today, and
+  has offered `RUNTIME_HOST_PROTOCOL_VERSION` with the promotion of the internal
+  tier.
+- Zeocore's promotion of the internal tier, after 0.14.0. Until then, those names
+  are qualified per release as described above.
