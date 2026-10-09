@@ -16,6 +16,14 @@ bytes. This is a cross-language protocol, not an implementation detail.
 5. Strings are preserved as Unicode. Canonically equivalent but byte-distinct
    Unicode strings are not normalized implicitly.
 6. The digest is lowercase `sha256:` followed by 64 hexadecimal characters.
+7. Absent and null are not interchangeable on the wire. A digest covers the
+   fully materialized contract: every declared field is present, defaults are
+   filled in, and an unset optional field is serialized as `null`. A producer in
+   another language must materialize every field from the contract's JSON
+   Schema (its `default` values) before canonicalizing. Omitting a `null` or
+   defaulted field yields different bytes and a different digest. A payload
+   that omits them is still valid input: Creator fills the defaults on
+   validation and recomputes the digest over the full form.
 
 Golden vectors live in `reference/digest-vectors.json`. The Python suite and the
 Node/TypeScript-consumer proof both verify those same bytes and hashes.
