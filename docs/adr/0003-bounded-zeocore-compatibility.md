@@ -78,6 +78,25 @@ change. The runtime check in `provider.py` and the doctor check accept a version
 only if it is inside the declared range **and** in the qualified list. Neither
 check simply compares against one string.
 
+## Protocol pins at the current releases
+
+These are the sha256 values of `contracts/runtime-host-v1/` in Zeocore's source
+tree, measured on 2026-10-09. They are identical at `v0.11.0` (`4fb6dc9c`, the
+current exact pin) and `v0.12.0` (`ddbd9e0d`), and the 0.14.0 draft (#89,
+`4a4c8414`) does not change the directory. Qualifying a new release starts by
+comparing against this table; any difference is a protocol change, not a
+qualification.
+
+| File | sha256 |
+|---|---|
+| `canonical-vectors.json` | `0a8e8ce9af01134181d464997c7dc9172bc9a468a261ce7f02232e712b75fdb5` |
+| `effect-request.schema.json` | `ab0392af101d6f12ca92948135c2c25b7be67a85e6ad1f3e4b43e3c776758a66` |
+| `host-result.schema.json` | `8c5a0b7770e8768fc9edbc105ed5f1600483e8d79d9fda66bc1dc6aa3a7f1368` |
+| `invocation-request.schema.json` | `b0b746be0097dfbc3f8160915d1e092a1b71a61a6d308c7b7570c2089db29e46` |
+| `launch-context.schema.json` | `5b2eccd9c379ad03cf42ea500edb0daee1d309e4352bae7037f0a7e86866b19f` |
+| `provider-binding.schema.json` | `09bc9a713c1c784715580794cf6dfd682ce13dca460a889042b43b1cc46952f1` |
+| `runtime-reply.schema.json` | `13e695f183212cc6898050d44c2088605af3ab81057cd9d9357bd3c6a8e8204e` |
+
 ## What does not change
 
 - Creator owns no credentials, authority, scheduling, effects or retries
