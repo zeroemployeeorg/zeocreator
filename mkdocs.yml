@@ -110,5 +110,6 @@ nav:
       - Contributing: contributing.md
       - Zeocore boundary: adr/0001-zeocore-version-and-runtime-boundary.md
       - Runtime host decision: adr/0002-zeocore-runtime-host.md
+      - Bounded Zeocore compatibility (proposed): adr/0003-bounded-zeocore-compatibility.md
       - Release readiness: release-readiness.md
       - Legacy removal: removal-report.md
