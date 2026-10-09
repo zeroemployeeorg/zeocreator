@@ -28,9 +28,16 @@ Qualification covers only the Zeocore surface Creator actually uses:
   `CapabilityManifest`;
 - `zeo_core.contracts.runtime`: `InvocationRequest`, `ProviderBinding`;
 - `zeo_core.adapters.runtime_host`: `host.prepare_request`,
-  `catalogue.validate_inventory`, and `canonical.canonical_bytes`, `MAX_BYTES`,
-  `InvalidRequestError` and `ProtocolError`;
+  `catalogue.validate_inventory`, and `canonical.canonical_bytes`, `digest`,
+  `manifest_inventory`, `parse_json`, `MAX_BYTES`, `InvalidRequestError` and
+  `ProtocolError`;
 - `zeo_core.adapters.llm_tools`: `OpenAIFunctionTool`, `project_openai_tool`.
+
+Creator's tests also use a gate surface, which qualification covers too:
+`catalogue.CandidateCatalogue`, `host.parse_result`,
+`contracts.CapabilityStatus`, and `contracts.runtime.AttemptBinding` and
+`LaunchContext`. The list is measured by parsing every `zeo_core` import in
+`src/` and `tests/`, not by line matching, which misses multi-line imports.
 
 A Zeocore release qualifies when, installed in a clean environment, it passes:
 
