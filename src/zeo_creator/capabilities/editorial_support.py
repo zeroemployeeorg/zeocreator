@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterable
+
 from zeo_core.tools import ToolContext
 
 from zeo_creator.errors import CreatorDomainError
@@ -27,3 +29,14 @@ def require_scope(
             raise CreatorDomainError(
                 "ZEO_CREATOR_PUBLICATION_LEAKAGE", "publication scope mismatch"
             )
+
+
+def require_bound_refs(refs: Iterable[str], allowed: set[str], code: str, what: str) -> None:
+    """Refuse output that cites anything the strategy was not given.
+
+    An injected strategy is trusted for judgement, never for scope: every reference
+    it returns must resolve to an input of the same call.
+    """
+    unbound = sorted(set(refs) - allowed)
+    if unbound:
+        raise CreatorDomainError(code, f"{what} cites inputs it was not given: {unbound[:3]}")

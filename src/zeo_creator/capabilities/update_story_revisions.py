@@ -8,7 +8,11 @@ from zeo_core.contracts import CapabilityExample, CapabilityResult, EffectKind
 from zeo_core.tools import ToolContext, capability
 
 from zeo_creator.capabilities._newsroom_examples import update_request
-from zeo_creator.capabilities.editorial_support import require_scope, strategy
+from zeo_creator.capabilities.editorial_support import (
+    require_bound_refs,
+    require_scope,
+    strategy,
+)
 from zeo_creator.contracts.common import CreatorModel
 from zeo_creator.contracts.newsroom import EditorialSignal, StoryRevision
 from zeo_creator.errors import CreatorDomainError
@@ -55,6 +59,30 @@ def update_story_revisions(
             previous_revisions=request.previous_revisions,
             created_at=request.created_at,
         )
+        require_scope(request.organization_id, request.publication_id, *revisions)
+        signal_ids = {item.signal_id for item in request.signals}
+        previous_ids = {item.story_revision_id for item in request.previous_revisions}
+        sources = {ref for item in request.signals for ref in item.source_refs} | {
+            ref
+            for item in request.previous_revisions
+            for ref in (*item.primary_source_refs, *item.secondary_source_refs)
+        }
+        produced: set[str] = set()
+        for revision in revisions:
+            what = f"story revision {revision.story_revision_id}"
+            code = "ZEO_CREATOR_PUBLICATION_LEAKAGE"
+            require_bound_refs(revision.signal_refs, signal_ids, code, what)
+            if revision.previous_revision_ref is not None:
+                require_bound_refs(
+                    (revision.previous_revision_ref,), previous_ids | produced, code, what
+                )
+            require_bound_refs(
+                (*revision.primary_source_refs, *revision.secondary_source_refs),
+                sources,
+                code,
+                what,
+            )
+            produced.add(revision.story_revision_id)
     except CreatorDomainError as exc:
         return CapabilityResult.fail(msg=str(exc), code=exc.code, exception=exc)
     return CapabilityResult.ok(
