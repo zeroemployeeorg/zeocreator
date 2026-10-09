@@ -83,7 +83,7 @@ verify Core's shared vectors and the prepared request bytes in Go.
 Runtime launches `zeo-capability invoke --request - --context-fd 3 --runtime-fd 4`.
 The prepared request goes on stdin. Runtime supplies `LaunchContext` on a private
 inherited descriptor and its connected Unix socket endpoint on another. Follow
-the exact [Core 0.11.0 protocol](https://github.com/profrodai/zeocore/blob/v0.11.0/docs/how-to/runtime-host.md),
+the exact [Core 0.11.0 protocol](https://github.com/zeroemployeeorg/zeocore/blob/v0.11.0/docs/how-to/runtime-host.md),
 including four-byte big-endian framing, message/reply binding and total deadlines.
 
 1. `bootstrap`: Runtime verifies the actual supervised child, launch digest and

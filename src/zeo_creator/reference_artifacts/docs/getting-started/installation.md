@@ -59,7 +59,7 @@ outside the source checkout. Their in-memory hosts never send an email.
 ## Work from the release source
 
 ```console
-git clone --branch v0.5.4 https://github.com/profrodai/zeocreator.git
+git clone --branch v0.5.4 https://github.com/zeroemployeeorg/zeocreator.git
 cd zeocreator
 uv sync --frozen
 make doctor

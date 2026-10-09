@@ -28,10 +28,10 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/profrodai/zeocreator"
-Repository = "https://github.com/profrodai/zeocreator"
-Documentation = "https://profrodai.github.io/zeocreator/"
-Issues = "https://github.com/profrodai/zeocreator/issues"
+Homepage = "https://github.com/zeroemployeeorg/zeocreator"
+Repository = "https://github.com/zeroemployeeorg/zeocreator"
+Documentation = "https://zeroemployeeorg.github.io/zeocreator/"
+Issues = "https://github.com/zeroemployeeorg/zeocreator/issues"
 
 [project.scripts]
 zeo-creator = "zeo_creator.cli:main"

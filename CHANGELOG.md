@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Point repository, documentation, badge and package-metadata links at `zeroemployeeorg/zeocreator` and `zeroemployeeorg.github.io/zeocreator` after the repository move; the old GitHub Pages address no longer resolves. Version tags and commit pins are unchanged.
+- State the required PyPI trusted publisher and that its current configuration is unverified since the move.
+
 ## 0.5.4 — 2026-09-10
 
 - Upgrade to the released `zeocore[runtime-host]==0.11.0` dependency.
