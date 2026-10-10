@@ -1,0 +1,136 @@
+{
+  "name": "jcs-shared-vectors",
+  "version": 1,
+  "rules": "RFC 8785 (JCS) canonical UTF-8 bytes; sha256 over those bytes. Inputs are JSON text. A conforming implementation reproduces canonical_text and sha256 for every valid case and refuses every invalid case.",
+  "producer": "zeocreator, rfc8785 0.1.4",
+  "valid": [
+    {
+      "name": "numbers-integral-float",
+      "input_json": "{\"a\":1.0,\"b\":-0.0,\"c\":100.0}",
+      "canonical_text": "{\"a\":1,\"b\":0,\"c\":100}",
+      "sha256": "51180fd1373d9f9fb5044bb8b7345caaafd325499f4b86d7d629ed1e8373d0da",
+      "note": "divergence observed: a sorted-keys serializer emitted 1.0, -0.0 and 100.0"
+    },
+    {
+      "name": "numbers-exponent",
+      "input_json": "{\"big\":1e21,\"small\":1e-7,\"mid\":123456789012.5}",
+      "canonical_text": "{\"big\":1e+21,\"mid\":123456789012.5,\"small\":1e-7}",
+      "sha256": "54c38e7cb2bc3af03f0fd839a7b2e834f5841485b468d3ac2eacd095709bf0e6",
+      "note": "divergence observed: a serializer emitted 1e-07"
+    },
+    {
+      "name": "numbers-shortest-roundtrip",
+      "input_json": "{\"x\":0.1,\"y\":0.3333333333333333,\"z\":5e-324}",
+      "canonical_text": "{\"x\":0.1,\"y\":0.3333333333333333,\"z\":5e-324}",
+      "sha256": "ffbd6a371dbb63ddc8c834a48ae54eaaf37689a48455a12bd278461d323d9df2",
+      "note": ""
+    },
+    {
+      "name": "numbers-safe-integer-edge",
+      "input_json": "{\"max\":9007199254740991,\"neg\":-9007199254740991}",
+      "canonical_text": "{\"max\":9007199254740991,\"neg\":-9007199254740991}",
+      "sha256": "006b2308c1ebf11f90fd2797695af6f9869dd0c1ab42c09750625c2850be3480",
+      "note": ""
+    },
+    {
+      "name": "key-order-utf16-vs-codepoint",
+      "input_json": "{\"\\ud83d\\ude00\":1,\"\\ue000\":2,\"a\":3,\"\\u00e9\":4}",
+      "canonical_text": "{\"a\":3,\"é\":4,\"😀\":1,\"\":2}",
+      "sha256": "aa905830ccaad00e48028811e0e1cd5e9e7a5b844b0ee248a2c9f34ee1b36a53",
+      "note": "divergence observed: code-point or UTF-8 byte order puts U+E000 before U+1F600"
+    },
+    {
+      "name": "key-order-nested",
+      "input_json": "{\"b\":{\"z\":1,\"a\":2},\"a\":[{\"d\":1,\"c\":2}]}",
+      "canonical_text": "{\"a\":[{\"c\":2,\"d\":1}],\"b\":{\"a\":2,\"z\":1}}",
+      "sha256": "d15697dae6d953d871b4a9c25c23a9ad15042f2334b3d97930aa06e365946471",
+      "note": ""
+    },
+    {
+      "name": "escape-controls",
+      "input_json": "{\"s\":\"\\b\\t\\n\\f\\r\\u0000\\u001f\\u007f\"}",
+      "canonical_text": "{\"s\":\"\\b\\t\\n\\f\\r\\u0000\\u001f\"}",
+      "sha256": "195afdc5ace46e3abe6af0738b28bffc413cc792e6e4a7d1447ea165a6792323",
+      "note": ""
+    },
+    {
+      "name": "escape-quote-backslash-slash",
+      "input_json": "{\"s\":\"\\\"\\\\\\/\"}",
+      "canonical_text": "{\"s\":\"\\\"\\\\/\"}",
+      "sha256": "c41176394d3b2dfdac3e8edff2d8e9e4ae62a218f674f6929d3d12ce5aca369b",
+      "note": ""
+    },
+    {
+      "name": "escape-non-ascii-raw",
+      "input_json": "{\"s\":\"\\u00e9\\u20ac\\ud83d\\ude00\\u2028\"}",
+      "canonical_text": "{\"s\":\"é€😀 \"}",
+      "sha256": "e72607429783c65c69df8c8c50d8ae7cdba55941c7fa58fd9c2a656da2da1282",
+      "note": ""
+    },
+    {
+      "name": "timestamp-normalized-utc",
+      "input_json": "{\"at\":\"2026-10-09T05:00:00.000000Z\"}",
+      "canonical_text": "{\"at\":\"2026-10-09T05:00:00.000000Z\"}",
+      "sha256": "15dd9fe9c895952e9bc16cd806bb69c33e9f0b3ae2af090a0f7d1e7f1b3179a0",
+      "note": "the timestamp rule is Creator's: offset required, normalized to microseconds and Z"
+    },
+    {
+      "name": "null-serialization",
+      "input_json": "{\"present_null\":null}",
+      "canonical_text": "{\"present_null\":null}",
+      "sha256": "d8d8ac651957a9a4e0289b7f8db35da0109124bb15bc066479b0cfeafaa23275",
+      "note": "shows null serialization only; the absent-versus-null rule is still open"
+    },
+    {
+      "name": "empty-containers",
+      "input_json": "{\"o\":{},\"a\":[],\"s\":\"\"}",
+      "canonical_text": "{\"a\":[],\"o\":{},\"s\":\"\"}",
+      "sha256": "c127f9b3c6f4233b3976f8e2d54486ab15f9a46cfa50fc14ae6d0787d1ac2917",
+      "note": ""
+    },
+    {
+      "name": "whitespace-insignificant",
+      "input_json": "{ \"b\" : [ 1 , 2 ] ,\n \"a\" : true }",
+      "canonical_text": "{\"a\":true,\"b\":[1,2]}",
+      "sha256": "31c7b51835fcc67978404ca53f5b5b87dbafb8b72bd0c8a4f72263ccc2e7f622",
+      "note": ""
+    }
+  ],
+  "invalid": [
+    {
+      "name": "nan",
+      "input_json": "{\"v\":NaN}",
+      "reason": "not JSON"
+    },
+    {
+      "name": "infinity",
+      "input_json": "{\"v\":Infinity}",
+      "reason": "not JSON"
+    },
+    {
+      "name": "negative-infinity",
+      "input_json": "{\"v\":-Infinity}",
+      "reason": "not JSON"
+    },
+    {
+      "name": "integer-beyond-safe-range",
+      "input_json": "{\"v\":9007199254740993}",
+      "reason": "integer outside +/-(2^53-1) cannot be represented exactly"
+    },
+    {
+      "name": "lone-surrogate-in-string",
+      "input_json": "{\"v\":\"\\ud800\"}",
+      "reason": "not well-formed Unicode"
+    },
+    {
+      "name": "lone-surrogate-in-key",
+      "input_json": "{\"\\udc00\":1}",
+      "reason": "not well-formed Unicode"
+    },
+    {
+      "name": "duplicate-key",
+      "input_json": "{\"a\":1,\"a\":2}",
+      "reason": "duplicate member names are not admitted"
+    }
+  ]
+}

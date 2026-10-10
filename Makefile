@@ -86,6 +86,7 @@ check: format-check lint typecheck test reference-check docs
 digest-vectors:
 	node contracts/verify-digest-vectors.mjs
 	node contracts/verify-email-digest-vectors-v1.mjs
+	node contracts/verify-jcs-shared-vectors-v1.mjs
 
 dist-check:
 	rm -rf dist
