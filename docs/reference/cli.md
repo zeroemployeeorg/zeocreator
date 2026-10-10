@@ -79,13 +79,17 @@ Other seats and tools operate the CLI through this fixed contract:
 - Machine-readable output: `capabilities --json`, `contracts list --json` and
   `doctor --json` emit JSON when asked. `contracts export`, `contract-schema`
   and `runtime-provider` always emit JSON.
-- Exit codes:
+- Exit codes follow Zeocore's `cli_protocol` 1, so they mean the same in every
+  ZEO tool:
 
 | Code | Meaning |
 |---|---|
-| `0` | Success |
-| `1` | A check failed (`doctor` reports `"ok": false`) |
-| `2` | Bad input: an unknown command, option or contract |
+| `0` | Done |
+| `1` | Internal error: stdout is `{"ok": false, "outcome": "internal"}`, with no detail |
+| `2` | Invalid input or command: an unknown command, option or contract |
+| `20` | Refused: a check failed (`doctor` reports `"ok": false`) |
+
+Codes 10 to 13 concern remote operations, which this CLI never performs.
 
 ## Install, upgrade and rollback
 

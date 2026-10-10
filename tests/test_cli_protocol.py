@@ -1,9 +1,12 @@
 """Other seats operate the CLI through documented verbs, JSON and fixed exit codes."""
 
 import json
+import sys
 
+import pytest
 from typer.testing import CliRunner
 
+import zeo_creator.cli as cli
 from zeo_creator.cli import app
 
 runner = CliRunner()
@@ -42,3 +45,26 @@ def test_bad_input_exits_two() -> None:
         app, ["contract-schema", "--name", "no-such-contract", "--version", "1"]
     )
     assert unknown.exit_code == 2
+
+
+def test_a_failed_check_is_refused_with_twenty(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(cli, "capability_manifests", lambda: ())
+    result = runner.invoke(app, ["doctor", "--json"])
+    assert result.exit_code == 20
+    assert json.loads(result.stdout)["ok"] is False
+
+
+def test_an_internal_error_exits_one_without_detail(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    def broken() -> None:
+        raise RuntimeError("secret detail")
+
+    monkeypatch.setattr(cli, "capability_manifests", broken)
+    monkeypatch.setattr(sys, "argv", ["zeo-creator", "capabilities", "--json"])
+    with pytest.raises(SystemExit) as exited:
+        cli.main()
+    assert exited.value.code == 1
+    out = capsys.readouterr().out
+    assert json.loads(out) == {"ok": False, "outcome": "internal"}
+    assert "secret detail" not in out
