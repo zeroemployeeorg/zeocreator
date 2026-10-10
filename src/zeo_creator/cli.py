@@ -28,6 +28,13 @@ contracts_app = typer.Typer(help="Discover and export packaged public contract s
 app.add_typer(contracts_app, name="contracts")
 
 
+# Exit status follows Zeocore's cli_protocol 1: 0 done, 1 internal error, 2 invalid
+# input or command, 20 held or refused (a failed check). Codes 10 to 13 concern remote
+# operations, which this CLI never performs.
+EXIT_INTERNAL = 1
+EXIT_REFUSED = 20
+
+
 class ProjectionFormat(StrEnum):
     MANIFEST = "manifest"
     OPENAI = "openai"
@@ -156,7 +163,7 @@ def doctor(json_output: bool = typer.Option(False, "--json")) -> None:
         for name, passed in checks.items():
             console.print(f"{'ready' if passed else 'failed':>6}  {name}")
     if not payload["ok"]:
-        raise typer.Exit(1)
+        raise typer.Exit(EXIT_REFUSED)
 
 
 @app.command("runtime-provider")
@@ -174,7 +181,12 @@ def runtime_provider() -> None:
 
 
 def main() -> None:
-    app()
+    try:
+        app()
+    except Exception:
+        # An internal error never echoes input or detail on stdout.
+        typer.echo(json.dumps({"ok": False, "outcome": "internal"}))
+        sys.exit(EXIT_INTERNAL)
 
 
 if __name__ == "__main__":

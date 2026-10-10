@@ -8,9 +8,13 @@ from zeo_core.contracts import CapabilityExample, CapabilityResult, EffectKind
 from zeo_core.tools import ToolContext, capability
 
 from zeo_creator.capabilities._newsroom_examples import dossier_request
-from zeo_creator.capabilities.editorial_support import strategy
+from zeo_creator.capabilities.editorial_support import (
+    require_bound_refs,
+    strategy,
+)
 from zeo_creator.contracts.common import CreatorModel
 from zeo_creator.contracts.newsroom import StoryDossier, StoryRevision
+from zeo_creator.errors import CreatorDomainError
 from zeo_creator.services.editorial_kernel import StoryDossierStrategy
 
 
@@ -39,14 +43,47 @@ class BuildStoryDossierResponse(CreatorModel):
 def build_story_dossier(
     request: BuildStoryDossierRequest, ctx: ToolContext
 ) -> CapabilityResult[BuildStoryDossierResponse]:
+    story = request.story
     implementation = cast(StoryDossierStrategy, strategy(ctx, "creator.story_dossier_strategy"))
     dossier = implementation.build_dossier(
-        story=request.story,
+        story=story,
         audience_significance=request.audience_significance,
         prior_coverage_refs=request.prior_coverage_refs,
         created_at=request.created_at,
         revision=request.revision,
     )
+    try:
+        what = f"dossier {dossier.dossier_id}"
+        code = "ZEO_CREATOR_SCOPE_MISMATCH"
+        require_bound_refs(
+            (dossier.organization_id, dossier.publication_id),
+            {story.organization_id, story.publication_id},
+            code,
+            what,
+        )
+        require_bound_refs(
+            (dossier.story_id, dossier.story_revision_ref),
+            {story.story_id, story.story_revision_id},
+            code,
+            what,
+        )
+        require_bound_refs(
+            dossier.evidence_lineage,
+            {
+                *story.primary_source_refs,
+                *story.secondary_source_refs,
+                *story.signal_refs,
+                *(
+                    ref
+                    for claim in (*story.verified_claims, *story.disputed_claims)
+                    for ref in claim.evidence_refs
+                ),
+            },
+            code,
+            what,
+        )
+    except CreatorDomainError as exc:
+        return CapabilityResult.fail(msg=str(exc), code=exc.code, exception=exc)
     return CapabilityResult.ok(
         data=BuildStoryDossierResponse(dossier=dossier), msg="Built frozen story dossier"
     )

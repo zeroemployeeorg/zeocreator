@@ -212,6 +212,9 @@ class DeterministicEditorialStrategy(
                     ),
                 )
             )
+            # A later signal on the same topic in this batch develops this revision, so a
+            # story never gets two revisions with the same number.
+            previous_by_title[signal.topic.casefold()] = results[-1]
         return tuple(results)
 
     def build_dossier(

@@ -8,7 +8,11 @@ from zeo_core.contracts import CapabilityExample, CapabilityResult, EffectKind
 from zeo_core.tools import ToolContext, capability
 
 from zeo_creator.capabilities._newsroom_examples import extract_request
-from zeo_creator.capabilities.editorial_support import require_scope, strategy
+from zeo_creator.capabilities.editorial_support import (
+    require_bound_refs,
+    require_scope,
+    strategy,
+)
 from zeo_creator.contracts.common import CreatorModel
 from zeo_creator.contracts.newsroom import EditorialSignal, SourceObservation
 from zeo_creator.errors import CreatorDomainError
@@ -50,6 +54,15 @@ def extract_editorial_signals(
             created_at=request.created_at,
             revision=request.revision,
         )
+        require_scope(request.organization_id, request.publication_id, *signals)
+        given = {item.observation_id for item in request.observations}
+        for signal in signals:
+            require_bound_refs(
+                (*signal.source_refs, *signal.input_refs),
+                given,
+                "ZEO_CREATOR_PUBLICATION_LEAKAGE",
+                f"signal {signal.signal_id}",
+            )
     except CreatorDomainError as exc:
         return CapabilityResult.fail(msg=str(exc), code=exc.code, exception=exc)
     return CapabilityResult.ok(
