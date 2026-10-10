@@ -71,6 +71,34 @@ zeo-creator contract-schema --name=content-brief --version=1
 zeo-creator --version
 ```
 
+## Operating protocol
+
+Other seats and tools operate the CLI through this fixed contract:
+
+- `--help` on the root and on every command.
+- Machine-readable output: `capabilities --json`, `contracts list --json` and
+  `doctor --json` emit JSON when asked. `contracts export`, `contract-schema`
+  and `runtime-provider` always emit JSON.
+- Exit codes:
+
+| Code | Meaning |
+|---|---|
+| `0` | Success |
+| `1` | A check failed (`doctor` reports `"ok": false`) |
+| `2` | Bad input: an unknown command, option or contract |
+
+## Install, upgrade and rollback
+
+Install a published release as a tool, never a checkout, then check it:
+
+```console
+make install VERSION=0.5.4
+```
+
+This runs `uv tool install --force "zeocreator==0.5.4"` and then
+`zeo-creator doctor --json`. To upgrade, or to roll back, run the same command
+with the version you want.
+
 ## What is intentionally absent
 
 There is no daily-run, schedule, approve, publish, OAuth, credential, or daemon

@@ -1,10 +1,11 @@
 .PHONY: help setup sync test lint typecheck format check verify clean lock update \
 	cli version doctor capabilities reference reference-check docs docs-serve examples \
-	digest-vectors dist-check release-check
+	digest-vectors dist-check release-check install
 
 UV ?= uv
 ZEO_CREATOR := $(UV) run zeo-creator
 ARGS ?=
+VERSION ?=
 
 help:
 	@echo "ZEO Creator — capability package diagnostics"
@@ -19,8 +20,16 @@ help:
 	@echo "  make examples       Run every public example"
 	@echo "  make version        Show the installed distribution version"
 	@echo "  make cli ARGS='…'   Invoke diagnostics directly"
+	@echo "  make install VERSION=X.Y.Z  Install that PyPI release as a tool, then run doctor"
 
 setup: sync
+
+# Installs a published release, never this checkout. Rollback is the same target
+# with the previous version.
+install:
+	@test -n "$(VERSION)" || { echo "make install needs VERSION=X.Y.Z" >&2; exit 2; }
+	$(UV) tool install --force "zeocreator==$(VERSION)"
+	zeo-creator doctor --json
 
 sync:
 	$(UV) sync --frozen
